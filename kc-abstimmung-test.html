@@ -21,11 +21,29 @@ document.getElementById('introNext').onclick=()=>{document.querySelector('.intro
 const ENDPOINT='https://ptblnpiroqftcvlsrhac.supabase.co/rest/v1/kc_wm_presentation_feedback',KEY='sb_publishable_SqXIeGN-clcZ4gjmpLdSww_4DLfyy24';
 function token(){let t=localStorage.getItem('kc_wm_vote_token');if(!t){t=crypto.randomUUID();localStorage.setItem('kc_wm_vote_token',t)}return t}
 const form=document.getElementById('vote'),status=document.getElementById('status');
+const optionalWhenNoInterest=[...form.querySelectorAll('input[name="rating_a"],input[name="rating_b"],input[name="photo_motivation"]')];
+function syncNoInterest(){
+ const no=checked('choice')==='kein_interesse';
+ optionalWhenNoInterest.forEach(el=>{el.required=!no;el.disabled=no;if(no)el.checked=false});
+}
+form.querySelectorAll('input[name="choice"]').forEach(el=>el.addEventListener('change',syncNoInterest));
 function checked(n){return form.querySelector('input[name="'+n+'"]:checked')?.value||''}
 form.addEventListener('submit',async e=>{
  e.preventDefault(); if(form.website.value)return;
  if(!form.reportValidity())return;
  const fd=new FormData(form), choice=fd.get('choice'), ra=fd.get('rating_a'), rb=fd.get('rating_b'), pm=fd.get('photo_motivation'), name=(fd.get('voter_name')||'').trim(), comment=(fd.get('comment')||'').trim();
+ if(choice==='kein_interesse'){
+   if(!confirm('Möchtest du die Bewertung wirklich verlassen?\n\nEs wird nur gespeichert, dass du kein Interesse an der Umfrage hast.')){
+     status.textContent='Du kannst die Bewertung weiter ausfüllen.'; return;
+   }
+   const payload={choice:'kein_interesse',rating_a:null,rating_b:null,voter_name:name,comment:'[Kein Interesse an der Umfrage]',client_token:token()};
+   status.textContent='Auswahl wird gespeichert …';
+   try{const r=await fetch(ENDPOINT,{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(payload)});
+   if(r.ok){status.textContent='Danke. Deine Auswahl wurde gespeichert.';form.querySelector('button[type=submit]').disabled=true}
+   else if(r.status===409){status.textContent='Für diesen Vornamen oder von diesem Browser wurde bereits eine Auswahl gespeichert.';form.querySelector('button[type=submit]').disabled=true}
+   else throw Error()}catch{status.textContent='Die Auswahl konnte gerade nicht gespeichert werden. Bitte später noch einmal versuchen.'}
+   return;
+ }
  if(!ra||!rb){status.textContent='Bitte unbedingt beide Präsentationen A und B bewerten.';return}
  const labels={A:'Version A',B:'Version B',gleich:'Beide gleich',kein_interesse:'Kein Interesse an der Umfrage'};
  const summary='Bitte prüfe deine Angaben:\n\nVorname: '+name+'\nBevorzugt: '+(labels[choice]||choice)+'\nBewertung Version A: '+ra+' von 5 Sternen\nBewertung Version B: '+rb+' von 5 Sternen\nFoto + Motivationsspruch: '+(pm==='ja'?'Ja':'Nein')+(comment?'\nKommentar: '+comment:'')+'\n\nBeide Präsentationen müssen bewertet werden.\n\nOK = Abschicken\nAbbrechen = Noch etwas ändern';
