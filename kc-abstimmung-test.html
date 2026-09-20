@@ -15,5 +15,26 @@
 <p><strong>Möchtest du mit Foto und Motivationsspruch erscheinen?</strong></p><div class="photo"><label><input required type="radio" name="photo_motivation" value="ja"> Ja, gerne</label><label><input required type="radio" name="photo_motivation" value="nein"> Nein</label></div>
 <p><label><strong>Vorname (Pflichtfeld)</strong><br><input required type="text" name="voter_name" maxlength="120" autocomplete="given-name" placeholder="Dein Vorname"></label></p>
 <p><label><strong>Anregungen / Kommentar (freiwillig)</strong><br><textarea name="comment" rows="5" maxlength="2000" placeholder="Was gefällt dir? Was würdest du ändern?"></textarea></label></p>
-<input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px"><button type="submit">Bewertung absenden</button><div id="status" class="status" role="status"></div></form></div></main>
-<script>document.getElementById('introNext').onclick=()=>{document.querySelector('.intro').hidden=true;document.getElementById('comparison').hidden=false;scrollTo({top:0,behavior:'smooth'})};const ENDPOINT='https://ptblnpiroqftcvlsrhac.supabase.co/rest/v1/kc_wm_presentation_feedback',KEY='sb_publishable_SqXIeGN-clcZ4gjmpLdSww_4DLfyy24';function token(){let t=localStorage.getItem('kc_wm_vote_token');if(!t){t=crypto.randomUUID();localStorage.setItem('kc_wm_vote_token',t)}return t}const form=document.getElementById('vote'),status=document.getElementById('status');form.addEventListener('submit',async e=>{e.preventDefault();if(form.website.value)return;const fd=new FormData(form),comment=(fd.get('comment')||'').trim(),pm=fd.get('photo_motivation');const payload={choice:fd.get('choice'),rating_a:Number(fd.get('rating_a')),rating_b:Number(fd.get('rating_b')),voter_name:(fd.get('voter_name')||'').trim()||null,comment:('[Foto+Motivationsspruch: '+pm+']'+(comment?' '+comment:'')).slice(0,2000),client_token:token()};status.textContent='Bewertung wird gespeichert …';try{const r=await fetch(ENDPOINT,{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(payload)});if(r.ok){status.textContent='Danke! Deine Bewertung wurde gespeichert.';form.querySelector('button').disabled=true}else if(r.status===409){status.textContent='Für diesen Vornamen oder von diesem Browser wurde bereits eine Bewertung gespeichert. Eine Doppelbewertung ist nicht möglich.';form.querySelector('button').disabled=true}else throw Error()}catch{status.textContent='Die Bewertung konnte gerade nicht gespeichert werden. Bitte später noch einmal versuchen.'}});</script></body></html>
+<input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px"><button type="submit" id="reviewBtn">Bewertung zusammenfassen</button><div id="status" class="status" role="status"></div></form></div></main>
+<script>
+document.getElementById('introNext').onclick=()=>{document.querySelector('.intro').hidden=true;document.getElementById('comparison').hidden=false;scrollTo({top:0,behavior:'smooth'})};
+const ENDPOINT='https://ptblnpiroqftcvlsrhac.supabase.co/rest/v1/kc_wm_presentation_feedback',KEY='sb_publishable_SqXIeGN-clcZ4gjmpLdSww_4DLfyy24';
+function token(){let t=localStorage.getItem('kc_wm_vote_token');if(!t){t=crypto.randomUUID();localStorage.setItem('kc_wm_vote_token',t)}return t}
+const form=document.getElementById('vote'),status=document.getElementById('status');
+function checked(n){return form.querySelector('input[name="'+n+'"]:checked')?.value||''}
+form.addEventListener('submit',async e=>{
+ e.preventDefault(); if(form.website.value)return;
+ if(!form.reportValidity())return;
+ const fd=new FormData(form), choice=fd.get('choice'), ra=fd.get('rating_a'), rb=fd.get('rating_b'), pm=fd.get('photo_motivation'), name=(fd.get('voter_name')||'').trim(), comment=(fd.get('comment')||'').trim();
+ if(!ra||!rb){status.textContent='Bitte unbedingt beide Präsentationen A und B bewerten.';return}
+ const labels={A:'Version A',B:'Version B',gleich:'Beide gleich',kein_interesse:'Kein Interesse an der Umfrage'};
+ const summary='Bitte prüfe deine Angaben:\n\nVorname: '+name+'\nBevorzugt: '+(labels[choice]||choice)+'\nBewertung Version A: '+ra+' von 5 Sternen\nBewertung Version B: '+rb+' von 5 Sternen\nFoto + Motivationsspruch: '+(pm==='ja'?'Ja':'Nein')+(comment?'\nKommentar: '+comment:'')+'\n\nBeide Präsentationen müssen bewertet werden.\n\nOK = Abschicken\nAbbrechen = Noch etwas ändern';
+ if(!confirm(summary)){status.textContent='Noch nicht abgeschickt. Du kannst deine Angaben jetzt ändern.';return}
+ const payload={choice,rating_a:Number(ra),rating_b:Number(rb),voter_name:name,comment:('[Foto+Motivationsspruch: '+pm+']'+(comment?' '+comment:'')).slice(0,2000),client_token:token()};
+ status.textContent='Bewertung wird gespeichert …';
+ try{const r=await fetch(ENDPOINT,{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(payload)});
+ if(r.ok){status.textContent='Danke! Deine Bewertung wurde gespeichert.';form.querySelector('button[type=submit]').disabled=true}
+ else if(r.status===409){status.textContent='Für diesen Vornamen oder von diesem Browser wurde bereits eine Bewertung gespeichert. Eine Doppelbewertung ist nicht möglich.';form.querySelector('button[type=submit]').disabled=true}
+ else throw Error()}catch{status.textContent='Die Bewertung konnte gerade nicht gespeichert werden. Bitte später noch einmal versuchen.'}
+});
+</script></body></html>
