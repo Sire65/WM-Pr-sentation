@@ -124,7 +124,7 @@ p.fussnote{font-size:calc(24px*var(--zoom));opacity:.85;margin-top:14px}
   <button id="pause" style="background:#2e8b47;color:#fff">Pause</button>
   <button id="weiter">▶</button>
   <span id="stand"></span><span id="countdown" style="margin-left:6px;font-variant-numeric:tabular-nums"></span>
-  <button id="ton">Musik aus</button>
+  <span id="rotGotoWrap" style="display:inline-flex;align-items:center;gap:5px;color:#111;background:#fff;padding:4px 8px;border-radius:6px">Gehe zu <input id="rotGotoNumber" type="number" min="1" inputmode="numeric" aria-label="Foliennummer" style="width:56px;padding:5px;border-radius:5px;border:1px solid #64748b;color-scheme:only light;background:#fff;color:#111"><button id="rotGoto" style="background:#1b0d0b;color:#ffd76a;border:1px solid #d9aa3a;border-radius:6px;padding:5px 10px">OK</button></span><button id="ton">Musik aus</button>
   <button id="vollbild">Vollbild</button>
   <span>Pfeiltasten · Leertaste · F</span>
 </div>
@@ -148,7 +148,7 @@ function zeige(pos){
   queuePos=(pos+queue.length)%queue.length;
   folien.forEach(f=>f.classList.remove('an'));
   i=queue[queuePos];const f=folien[i];f.classList.add('an');
-  document.getElementById('stand').textContent=(queuePos+1)+' / '+queue.length+' · Durchlauf '+durchlauf;
+  document.getElementById('stand').textContent=(queuePos+1)+' / '+queue.length+' · Durchlauf '+durchlauf;const rotGotoEl=document.getElementById('rotGotoNumber');if(rotGotoEl&&document.activeElement!==rotGotoEl)rotGotoEl.value=i+1;
   clearTimeout(uhr);
   spielToken++;const meinToken=spielToken;
   dauerSek=Number(f.dataset.dauer)||9;restSek=dauerSek;ablaufZeit=laeuft?Date.now()+dauerSek*1000:0;
@@ -193,6 +193,9 @@ addEventListener('keydown',e=>{
   else if(e.key==='ArrowLeft'||e.key==='PageUp')zurueck();
   else if(e.key===' '){e.preventDefault();pause();}
   else if(e.key==='f'||e.key==='F')vollbild();});
+function geheZuFolie(nummer){const target=Math.max(0,Math.min(folien.length-1,Number(nummer||1)-1));const found=queue.indexOf(target);if(found>=0){zeige(found);}else{queue.splice(queuePos+1,0,target);zeige(queuePos+1);}}
+document.getElementById('rotGoto').onclick=()=>geheZuFolie(document.getElementById('rotGotoNumber').value);
+document.getElementById('rotGotoNumber').onkeydown=e=>{if(e.key==='Enter')geheZuFolie(e.target.value)};
 document.getElementById('weiter').onclick=weiter;
 document.getElementById('zurueck').onclick=zurueck;
 document.getElementById('pause').onclick=pause;
@@ -310,4 +313,4 @@ wetterHolen();
 
 window.KCFolien={anzahl:folien.length,zeige,weiter,zurueck,jetzt:()=>i,ton,einpassen};
 </script>
-<div style="position:fixed;right:28px;bottom:28px;z-index:99999;font:12px/1.2 monospace;color:#fff;background:rgba(0,0,0,.55);padding:3px 7px;border-radius:5px;pointer-events:none;user-select:none">Rot · Build 2026-09-22 19:29</div></body></html>
+<div style="position:fixed;right:28px;bottom:28px;z-index:99999;font:12px/1.2 monospace;color:#fff;background:rgba(0,0,0,.55);padding:3px 7px;border-radius:5px;pointer-events:none;user-select:none">Rot · Build 2026-09-22 19:34</div></body></html>
