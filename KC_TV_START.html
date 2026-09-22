@@ -137,7 +137,7 @@ addEventListener('resize',passen);passen();
 
 const BATCH=2;
 const mitgliederIdx=folien.map((f,idx)=>f.querySelector('.mitglied')?idx:-1).filter(idx=>idx>=0);
-let durchlauf=1,queue=[],queuePos=0,i=0,uhr=null,laeuft=true;
+let durchlauf=1,queue=[],queuePos=0,i=0,uhr=null,laeuft=true,spielToken=0;
 function baueQueue(){
   const anzahl=mitgliederIdx.length||1;
   const start=((durchlauf-1)*BATCH)%anzahl;
@@ -150,11 +150,12 @@ function zeige(pos){
   i=queue[queuePos];const f=folien[i];f.classList.add('an');
   document.getElementById('stand').textContent=(queuePos+1)+' / '+queue.length+' · Durchlauf '+durchlauf;
   clearTimeout(uhr);
-  if(laeuft)uhr=setTimeout(()=>weiter(),(Number(f.dataset.dauer)||9)*1000);}
+  spielToken++;const meinToken=spielToken;
+  if(laeuft)uhr=setTimeout(()=>{if(spielToken===meinToken)weiter()},(Number(f.dataset.dauer)||9)*1000);}
 function weiter(){let next=queuePos+1;if(next>=queue.length){durchlauf++;baueQueue();next=0;}zeige(next);}
 function zurueck(){let prev=queuePos-1;if(prev<0){prev=queue.length-1;}zeige(prev);}
 baueQueue();
-let pauseLast=0;function pause(){const now=Date.now();if(now-pauseLast<400)return;pauseLast=now;laeuft=!laeuft;document.getElementById('pause').textContent=laeuft?'Pause':'Weiter';
+let pauseLast=0;function pause(){const now=Date.now();if(now-pauseLast<400)return;pauseLast=now;laeuft=!laeuft;spielToken++;document.getElementById('pause').textContent=laeuft?'Pause':'Weiter';
   if(laeuft)zeige(queuePos);else clearTimeout(uhr);}
 
 /* Effekte werden erst beim Anzeigen erzeugt - 49 Folien gleichzeitig zu animieren
@@ -301,4 +302,4 @@ wetterHolen();
 
 window.KCFolien={anzahl:folien.length,zeige,weiter,zurueck,jetzt:()=>i,ton,einpassen};
 </script>
-<div style="position:fixed;right:28px;bottom:28px;z-index:99999;font:12px/1.2 monospace;color:#fff;background:rgba(0,0,0,.55);padding:3px 7px;border-radius:5px;pointer-events:none;user-select:none">Rot · Build 2026-09-22 18:34</div></body></html>
+<div style="position:fixed;right:28px;bottom:28px;z-index:99999;font:12px/1.2 monospace;color:#fff;background:rgba(0,0,0,.55);padding:3px 7px;border-radius:5px;pointer-events:none;user-select:none">Rot · Build 2026-09-22 18:41</div></body></html>
