@@ -155,7 +155,7 @@ function weiter(){let next=queuePos+1;if(next>=queue.length){durchlauf++;baueQue
 function zurueck(){let prev=queuePos-1;if(prev<0){prev=queue.length-1;}zeige(prev);}
 baueQueue();
 function pause(){laeuft=!laeuft;document.getElementById('pause').textContent=laeuft?'Pause':'Weiter';
-  if(laeuft)zeige(i);else clearTimeout(uhr);}
+  if(laeuft)zeige(queuePos);else clearTimeout(uhr);}
 
 /* Effekte werden erst beim Anzeigen erzeugt - 49 Folien gleichzeitig zu animieren
    bringt jeden Fernseh-Browser ins Stocken. */
