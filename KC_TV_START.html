@@ -156,6 +156,18 @@ function zeige(pos){
 function weiter(){let next=queuePos+1;if(next>=queue.length){durchlauf++;baueQueue();next=0;}zeige(next);}
 function zurueck(){let prev=queuePos-1;if(prev<0){prev=queue.length-1;}zeige(prev);}
 baueQueue();
+(function(){
+  const params=new URLSearchParams(location.search);
+  const heute=new Date();
+  const istLetzterAbend=params.get('finale')==='1'||(heute.getFullYear()===2026&&heute.getMonth()===11&&heute.getDate()===14);
+  const danke=folien[folien.length-1];
+  const eigen=danke&&danke.querySelector('.teil.eigen');
+  if(eigen){
+    eigen.textContent=istLetzterAbend
+      ?'Wir bedanken uns herzlich bei allen Besuchern und freuen uns auf ein Wiedersehen beim Weihnachtsmarkt 2027!'
+      :'Köcheclub Werne · Weihnachtsmarkt 2026';
+  }
+})();
 setInterval(()=>{const el=document.getElementById('countdown');if(!el)return;if(laeuft)restSek=Math.max(0,Math.ceil((ablaufZeit-Date.now())/1000));el.textContent=dauerSek+' / '+restSek+'s';},250);
 let pauseLast=0;function pause(){const now=Date.now();if(now-pauseLast<400)return;pauseLast=now;laeuft=!laeuft;spielToken++;const meinToken=spielToken;const btn=document.getElementById('pause');btn.textContent=laeuft?'Pause':'Weiter';btn.style.background=laeuft?'#2e8b47':'#c0392b';btn.style.color='#fff';document.body.classList.toggle('kcHartPause',!laeuft);clearTimeout(uhr);
   if(laeuft){ablaufZeit=Date.now()+restSek*1000;uhr=setTimeout(()=>{if(spielToken===meinToken)weiter()},restSek*1000);}else{restSek=Math.max(0,Math.ceil((ablaufZeit-Date.now())/1000));}}
@@ -304,4 +316,4 @@ wetterHolen();
 
 window.KCFolien={anzahl:folien.length,zeige,weiter,zurueck,jetzt:()=>i,ton,einpassen};
 </script>
-<div style="position:fixed;right:28px;bottom:28px;z-index:99999;font:12px/1.2 monospace;color:#fff;background:rgba(0,0,0,.55);padding:3px 7px;border-radius:5px;pointer-events:none;user-select:none">Rot · Build 2026-09-22 19:12</div></body></html>
+<div style="position:fixed;right:28px;bottom:28px;z-index:99999;font:12px/1.2 monospace;color:#fff;background:rgba(0,0,0,.55);padding:3px 7px;border-radius:5px;pointer-events:none;user-select:none">Rot · Build 2026-09-22 19:20</div></body></html>
