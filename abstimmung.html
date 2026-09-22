@@ -47,7 +47,7 @@ function render(){
   if(seen.A){
     badgeA.textContent='Angesehen ✓';badgeA.className='badge done';cardA.classList.remove('ready');
     confirmA.classList.remove('show');confirmA.disabled=true;
-    cardB.classList.remove('locked');cardB.classList.add(seen.B?'':'ready');
+    cardB.classList.remove('locked');if(!seen.B)cardB.classList.add('ready');
     linkB.classList.remove('disabled');linkB.removeAttribute('aria-disabled');linkB.textContent='Version B ansehen';
   }
   if(seen.B){
