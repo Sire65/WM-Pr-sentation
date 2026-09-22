@@ -61,9 +61,11 @@ function render(){
   }
   if(seen.A&&seen.B){
     gateHint.hidden=true;voteForm.hidden=false;
+    linkA.classList.add('disabled');linkA.setAttribute('aria-disabled','true');
+    linkB.classList.add('disabled');linkB.setAttribute('aria-disabled','true');
   }
 }
-linkA.addEventListener('click',()=>{pending='A'});
+linkA.addEventListener('click',(e)=>{if(linkA.classList.contains('disabled')){e.preventDefault();return}pending='A'});
 linkB.addEventListener('click',()=>{if(linkB.classList.contains('disabled'))return;pending='B'});
 confirmA.addEventListener('click',()=>markSeen('A'));
 confirmB.addEventListener('click',()=>markSeen('B'));
