@@ -45,11 +45,13 @@ function markSeen(v){
   seen[v]=true;saveSeen();render();
 }
 function render(){
+  if(!seen.A){confirmA.classList.add('show');confirmA.disabled=false}
   if(seen.A){
     badgeA.textContent='Angesehen ✓';badgeA.className='badge done';cardA.classList.remove('ready');
     confirmA.classList.remove('show');confirmA.disabled=true;
-    cardB.classList.remove('locked');if(!seen.B)cardB.classList.add('ready');
+    cardB.classList.remove('locked');
     linkB.classList.remove('disabled');linkB.removeAttribute('aria-disabled');linkB.textContent='Version B ansehen';
+    if(!seen.B){cardB.classList.add('ready');confirmB.classList.add('show');confirmB.disabled=false}
   }
   if(seen.B){
     badgeB.textContent='Angesehen ✓';badgeB.className='badge done';cardB.classList.remove('ready');
@@ -61,8 +63,8 @@ function render(){
     gateHint.hidden=true;voteForm.hidden=false;
   }
 }
-linkA.addEventListener('click',()=>{pending='A';confirmA.classList.add('show')});
-linkB.addEventListener('click',()=>{if(linkB.classList.contains('disabled'))return;pending='B';confirmB.classList.add('show')});
+linkA.addEventListener('click',()=>{pending='A'});
+linkB.addEventListener('click',()=>{if(linkB.classList.contains('disabled'))return;pending='B'});
 confirmA.addEventListener('click',()=>markSeen('A'));
 confirmB.addEventListener('click',()=>markSeen('B'));
 document.addEventListener('visibilitychange',()=>{
