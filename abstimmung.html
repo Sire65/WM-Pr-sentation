@@ -20,7 +20,8 @@
 <p class="muted" style="margin-top:-8px">Schon mal abgestimmt und es dir anders überlegt? Einfach denselben Vornamen erneut eingeben – deine vorherige Bewertung wird dann aktualisiert, es entsteht kein Doppeleintrag.</p>
 <p><label><strong>Anregungen / Kommentar (freiwillig)</strong><br><textarea name="comment" rows="5" maxlength="2000" placeholder="Was gefällt dir? Was würdest du ändern?"></textarea></label></p>
 <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px"><button type="submit">Bewertung absenden</button><div id="status" class="status" role="status"></div></form></div>
-<p style="text-align:center;font-size:.8rem;color:#8a7d6c;margin-top:18px">Versendet mit KC Communicator.</p></main>
+<p style="text-align:center;font-size:.8rem;color:#8a7d6c;margin-top:18px">Versendet mit KC Communicator.</p>
+<p style="text-align:center;font-size:.75rem;margin-top:4px"><a href="#" id="resetLink" style="color:#a9987e">Ansicht zurücksetzen (von vorne beginnen)</a></p></main>
 <script>
 // --- geführter Ablauf: erst A ansehen, dann wird B frei, erst danach die Bewertung ---
 // "angesehen" wird auf drei Wegen erkannt: automatisch per Tab-Rückkehr, manuell per
@@ -69,6 +70,7 @@ document.addEventListener('visibilitychange',()=>{
 });
 
 document.getElementById('introNext').onclick=()=>{document.querySelector('.intro').hidden=true;document.getElementById('comparison').hidden=false;scrollTo({top:0,behavior:'smooth'})};
+document.getElementById('resetLink').addEventListener('click',(e)=>{e.preventDefault();try{localStorage.removeItem(STORAGE_KEY)}catch{}location.reload()});
 // falls schon Fortschritt aus einer früheren Runde gespeichert ist (z.B. nach Rücksprung von der
 // Präsentation), gleich zum passenden Schritt springen statt wieder bei der Begrüßung zu starten
 if(seen.A||seen.B){
