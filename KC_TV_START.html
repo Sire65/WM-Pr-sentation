@@ -154,7 +154,7 @@ function zeige(pos){
 function weiter(){let next=queuePos+1;if(next>=queue.length){durchlauf++;baueQueue();next=0;}zeige(next);}
 function zurueck(){let prev=queuePos-1;if(prev<0){prev=queue.length-1;}zeige(prev);}
 baueQueue();
-function pause(){laeuft=!laeuft;document.getElementById('pause').textContent=laeuft?'Pause':'Weiter';
+let pauseLast=0;function pause(){const now=Date.now();if(now-pauseLast<400)return;pauseLast=now;laeuft=!laeuft;document.getElementById('pause').textContent=laeuft?'Pause':'Weiter';
   if(laeuft)zeige(queuePos);else clearTimeout(uhr);}
 
 /* Effekte werden erst beim Anzeigen erzeugt - 49 Folien gleichzeitig zu animieren
@@ -301,4 +301,4 @@ wetterHolen();
 
 window.KCFolien={anzahl:folien.length,zeige,weiter,zurueck,jetzt:()=>i,ton,einpassen};
 </script>
-<div style="position:fixed;right:28px;bottom:28px;z-index:99999;font:12px/1.2 monospace;color:#fff;background:rgba(0,0,0,.55);padding:3px 7px;border-radius:5px;pointer-events:none;user-select:none">Rot · Build 2026-09-22 18:13</div></body></html>
+<div style="position:fixed;right:28px;bottom:28px;z-index:99999;font:12px/1.2 monospace;color:#fff;background:rgba(0,0,0,.55);padding:3px 7px;border-radius:5px;pointer-events:none;user-select:none">Rot · Build 2026-09-22 18:34</div></body></html>
