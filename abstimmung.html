@@ -78,6 +78,20 @@ document.getElementById('resetLink').addEventListener('click',(e)=>{e.preventDef
 if(seen.A||seen.B){
   document.querySelector('.intro').hidden=true;document.getElementById('comparison').hidden=false;
 }
+// falls diese Seite gerade per "Fertig - zur Umfrage"-Button aus der Präsentation selbst aufgerufen
+// wurde (?seen=A / ?seen=B), gleich als angesehen vermerken - unabhaengig von Tab-Wechsel-Erkennung
+{
+  const params=new URLSearchParams(location.search);
+  const seenParam=params.get('seen');
+  if(seenParam==='A'||seenParam==='B'){
+    document.querySelector('.intro').hidden=true;document.getElementById('comparison').hidden=false;
+    markSeen(seenParam);
+    params.delete('seen');
+    const rest=params.toString();
+    history.replaceState(null,'',location.pathname+(rest?'?'+rest:''));
+    scrollTo({top:0,behavior:'smooth'});
+  }
+}
 render();
 
 // --- Absenden: Server-seitiges Upsert per Name (kein Doppeleintrag, aber "umentschieden" erlaubt) ---
