@@ -149,11 +149,20 @@ function zeige(pos){
   queuePos=(pos+queue.length)%queue.length;
   folien.forEach(f=>f.classList.remove('an'));
   i=queue[queuePos];const f=folien[i];f.classList.add('an');
+  const isLast=i===folien.length-1;
+  if(isLast&&!f.querySelector('#rotBigDone')){
+    const btn=document.createElement('button');
+    btn.id='rotBigDone';btn.textContent='✓ Fertig – zur Umfrage';
+    btn.style.cssText='position:absolute;left:50%;bottom:70px;transform:translateX(-50%);z-index:500;padding:24px 52px;font-size:30px;font-weight:800;border:none;border-radius:16px;background:#1f6b2c;color:#fff;cursor:pointer;box-shadow:0 12px 34px rgba(0,0,0,.45)';
+    btn.onclick=()=>{location.href='abstimmung.html?seen=B'};
+    f.appendChild(btn);
+  }
   document.getElementById('stand').textContent=(queuePos+1)+' / '+queue.length+' · Durchlauf '+durchlauf;const rotGotoEl=document.getElementById('rotGotoNumber');if(rotGotoEl&&document.activeElement!==rotGotoEl)rotGotoEl.value=i+1;
   clearTimeout(uhr);
   spielToken++;const meinToken=spielToken;
   dauerSek=Number(f.dataset.dauer)||9;restSek=dauerSek;ablaufZeit=laeuft?Date.now()+dauerSek*1000:0;
-  if(laeuft)uhr=setTimeout(()=>{if(spielToken===meinToken)weiter()},dauerSek*1000);}
+  if(laeuft)uhr=setTimeout(()=>{if(spielToken===meinToken)weiter()},dauerSek*1000);
+  if(isLast&&laeuft)pause();}
 function weiter(){let next=queuePos+1;if(next>=queue.length){durchlauf++;baueQueue();next=0;}zeige(next);}
 function zurueck(){let prev=queuePos-1;if(prev<0){prev=queue.length-1;}zeige(prev);}
 baueQueue();
