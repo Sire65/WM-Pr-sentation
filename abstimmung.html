@@ -19,9 +19,10 @@
 <p id="nameFeld"><label><strong>Vorname (Pflichtfeld)</strong><br><input required type="text" name="voter_name" maxlength="120" autocomplete="given-name" placeholder="Dein Vorname"></label></p>
 <p class="muted" id="nameHinweis" style="margin-top:-8px">Schon mal abgestimmt und es dir anders überlegt? Einfach denselben Vornamen erneut eingeben – deine vorherige Bewertung wird dann aktualisiert, es entsteht kein Doppeleintrag.</p>
 <p><label><strong>Anregungen / Kommentar (freiwillig)</strong><br><textarea name="comment" rows="5" maxlength="2000" placeholder="Was gefällt dir? Was würdest du ändern?"></textarea></label></p>
-<input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px"><button type="submit">Bewertung absenden</button><div id="status" class="status" role="status"></div></form><section id="fertig" class="intro" hidden style="margin-top:18px"><h2>Danke für deine Mitarbeit!</h2><p id="fertigText"></p><p class="muted" style="margin-top:22px;padding-top:16px;border-top:1px solid #e6ddd0">Du bist fertig. Bitte schließe das Browserfenster jetzt oben über das <strong>✕</strong>.</p></section></div>
+<input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px"><button type="submit">Bewertung absenden</button><div id="status" class="status" role="status"></div></form><section id="fertig" class="intro" hidden style="margin-top:18px"><h2>Danke für deine Mitarbeit!</h2><p id="fertigText"></p><div id="pushBox"></div><p class="muted" style="margin-top:22px;padding-top:16px;border-top:1px solid #e6ddd0">Du bist fertig. Bitte schließe das Browserfenster jetzt oben über das <strong>✕</strong>.</p></section></div>
 <p id="communicatorHinweis" style="text-align:center;font-size:.8rem;color:#8a7d6c;margin-top:18px">Versendet mit KC Communicator.</p>
 <p style="text-align:center;font-size:1.05rem;margin-top:10px"><a href="#" id="resetLink" style="color:#7d1d1d;font-weight:650;text-decoration:underline">Von vorne beginnen</a></p></main>
+<script src="https://sire65.github.io/KC-Spruchauswahl/push.js"></script>
 <script>
 // --- geführter Ablauf: erst A ansehen, dann wird B frei, erst danach die Bewertung ---
 // "angesehen" wird auf drei Wegen erkannt: automatisch per Tab-Rückkehr, manuell per
@@ -213,6 +214,7 @@ async function absendenMitLink(){
     ?'Deine Rückmeldung ist gespeichert.'
     :'Deine Bewertung ist gespeichert. Wir haben vermerkt, dass du gar nicht in der Präsentation erscheinen möchtest – kein Foto, kein Name, kein Spruch.';
   document.getElementById('fertig').hidden=false;
+  if(window.KCPush)KCPush.anbieten(document.getElementById('pushBox'),tok,'umfrage');
   scrollTo({top:0,behavior:'smooth'});
 }
 if(PERSON_TOKEN)initMitLink();
